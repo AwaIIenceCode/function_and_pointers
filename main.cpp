@@ -1,48 +1,50 @@
 #include <iostream>
-#include <cmath>
 using namespace std;
 
-// Function to check if a number is prime
-bool isPrime(int number)
+// Function to distribute elements into positive, negative, and zero arrays
+void distributeElements(int* arr, int size, int*& positive, int& posCount, int*& negative, int& negCount, int*& zeros, int& zeroCount)
 {
-    if (number <= 1)
-    {
-        return false;
-    }
-    for (int i = 2; i <= sqrt(number); i++)
-    {
-        if (number % i == 0)
-        {
-            return false;
-        }
-    }
-    return true;
-}
+    posCount = negCount = zeroCount = 0;
 
-// Function to remove prime numbers from a dynamic array
-int* removePrimes(int* arr, int& size)
-{
-    int* temp = new int[size];
-    int count = 0;
-
+    // Count elements in each category
     for (int i = 0; i < size; i++)
     {
-        if (!isPrime(arr[i]))
+        if (arr[i] > 0)
         {
-            temp[count] = arr[i];
-            count++;
+            posCount++;
+        }
+        else if (arr[i] < 0)
+        {
+            negCount++;
+        }
+        else
+        {
+            zeroCount++;
         }
     }
 
-    int* newArr = new int[count];
-    for (int i = 0; i < count; i++)
-    {
-        newArr[i] = temp[i];
-    }
-    delete[] temp;
-    size = count;
+    // Allocate memory for each category
+    positive = new int[posCount];
+    negative = new int[negCount];
+    zeros = new int[zeroCount];
 
-    return newArr;
+    // Fill arrays
+    int pIndex = 0, nIndex = 0, zIndex = 0;
+    for (int i = 0; i < size; i++)
+    {
+        if (arr[i] > 0)
+        {
+            positive[pIndex++] = arr[i];
+        }
+        else if (arr[i] < 0)
+        {
+            negative[nIndex++] = arr[i];
+        }
+        else
+        {
+            zeros[zIndex++] = arr[i];
+        }
+    }
 }
 
 int main()
@@ -58,22 +60,38 @@ int main()
         cin >> arr[i];
     }
 
-    cout << "Original array:\n";
-    for (int i = 0; i < size; i++)
+    int* positive = nullptr;
+    int* negative = nullptr;
+    int* zeros = nullptr;
+    int posCount, negCount, zeroCount;
+
+    distributeElements(arr, size, positive, posCount, negative, negCount, zeros, zeroCount);
+
+    cout << "Positive elements:\n";
+    for (int i = 0; i < posCount; i++)
     {
-        cout << arr[i] << " ";
+        cout << positive[i] << " ";
     }
     cout << endl;
 
-    int* newArr = removePrimes(arr, size);
-    cout << "Array without prime numbers:\n";
-    for (int i = 0; i < size; i++)
+    cout << "Negative elements:\n";
+    for (int i = 0; i < negCount; i++)
     {
-        cout << newArr[i] << " ";
+        cout << negative[i] << " ";
+    }
+    cout << endl;
+
+    cout << "Zero elements:\n";
+    for (int i = 0; i < zeroCount; i++)
+    {
+        cout << zeros[i] << " ";
     }
     cout << endl;
 
     delete[] arr;
-    delete[] newArr;
+    delete[] positive;
+    delete[] negative;
+    delete[] zeros;
+
     return 0;
 }
