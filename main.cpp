@@ -1,85 +1,48 @@
 #include <iostream>
+#include <cmath>
 using namespace std;
 
-// Function to allocate memory for a dynamic array
-int* allocateArray(int size)
+// Function to check if a number is prime
+bool isPrime(int number)
 {
-    return new int[size];
+    if (number <= 1)
+    {
+        return false;
+    }
+    for (int i = 2; i <= sqrt(number); i++)
+    {
+        if (number % i == 0)
+        {
+            return false;
+        }
+    }
+    return true;
 }
 
-// Function to initialize a dynamic array
-void initializeArray(int* arr, int size)
+// Function to remove prime numbers from a dynamic array
+int* removePrimes(int* arr, int& size)
 {
+    int* temp = new int[size];
+    int count = 0;
+
     for (int i = 0; i < size; i++)
     {
-        cout << "Enter element [" << i << "]: ";
-        cin >> arr[i];
+        if (!isPrime(arr[i]))
+        {
+            temp[count] = arr[i];
+            count++;
+        }
     }
-}
 
-// Function to print a dynamic array
-void printArray(int* arr, int size)
-{
-    for (int i = 0; i < size; i++)
+    int* newArr = new int[count];
+    for (int i = 0; i < count; i++)
     {
-        cout << arr[i] << " ";
+        newArr[i] = temp[i];
     }
-    cout << endl;
-}
+    delete[] temp;
+    size = count;
 
-// Function to delete a dynamic array
-void deleteArray(int* arr)
-{
-    delete[] arr;
-}
-
-// Function to add an element to the end of a dynamic array
-void addElement(int*& arr, int& size, int element)
-{
-    int* temp = new int[size + 1];
-    for (int i = 0; i < size; i++)
-    {
-        temp[i] = arr[i];
-    }
-    temp[size] = element;
-    delete[] arr;
-    arr = temp;
-    size++;
-}
-
-// Function to insert an element at a specific index
-void insertElement(int*& arr, int& size, int index, int element)
-{
-    int* temp = new int[size + 1];
-    for (int i = 0; i < index; i++)
-    {
-        temp[i] = arr[i];
-    }
-    temp[index] = element;
-    for (int i = index; i < size; i++)
-    {
-        temp[i + 1] = arr[i];
-    }
-    delete[] arr;
-    arr = temp;
-    size++;
-}
-
-// Function to remove an element at a specific index
-void removeElement(int*& arr, int& size, int index)
-{
-    int* temp = new int[size - 1];
-    for (int i = 0; i < index; i++)
-    {
-        temp[i] = arr[i];
-    }
-    for (int i = index + 1; i < size; i++)
-    {
-        temp[i - 1] = arr[i];
-    }
-    delete[] arr;
-    arr = temp;
-    size--;
+    return newArr;
 }
 
 int main()
@@ -88,29 +51,29 @@ int main()
     cout << "Enter the size of the array: ";
     cin >> size;
 
-    int* arr = allocateArray(size);
-    initializeArray(arr, size);
+    int* arr = new int[size];
+    for (int i = 0; i < size; i++)
+    {
+        cout << "Enter element [" << i << "]: ";
+        cin >> arr[i];
+    }
 
-    cout << "Initial array:\n";
-    printArray(arr, size);
+    cout << "Original array:\n";
+    for (int i = 0; i < size; i++)
+    {
+        cout << arr[i] << " ";
+    }
+    cout << endl;
 
-    int element, index;
+    int* newArr = removePrimes(arr, size);
+    cout << "Array without prime numbers:\n";
+    for (int i = 0; i < size; i++)
+    {
+        cout << newArr[i] << " ";
+    }
+    cout << endl;
 
-    cout << "Enter an element to add to the end: ";
-    cin >> element;
-    addElement(arr, size, element);
-    printArray(arr, size);
-
-    cout << "Enter an index and element to insert: ";
-    cin >> index >> element;
-    insertElement(arr, size, index, element);
-    printArray(arr, size);
-
-    cout << "Enter an index to remove: ";
-    cin >> index;
-    removeElement(arr, size, index);
-    printArray(arr, size);
-
-    deleteArray(arr);
+    delete[] arr;
+    delete[] newArr;
     return 0;
 }
